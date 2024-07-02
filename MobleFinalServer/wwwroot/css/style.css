@@ -1,0 +1,14 @@
+html,
+body {
+    background-color: #f5f5f5;
+}
+
+.body-signin {
+    background-color: #f5f5f5;
+}
+
+/*.footer-fixed {
+    height: 0;
+    position: relative;
+    transform: translateY(-100%);
+}*/

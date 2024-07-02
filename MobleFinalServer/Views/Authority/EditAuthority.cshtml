@@ -1,0 +1,94 @@
+﻿@{
+    ViewBag.Title = "권한 수정";
+    Layout = "~/Views/Shared/_LayoutMain.cshtml";
+}
+@model MobleFinalServer.Models.EditUser
+<!-- 글 내용 -->
+<div class="row content">
+    <div class="col">
+        <div class="card">
+            <!-- 폼에 바인딩된 모델을 지정합니다. -->
+            <form method="post" asp-controller="Authority" asp-action="EditAuthority">
+                <div class="card-header">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span>회원 권한 수정</span>
+                        <button type="submit" class="btn btn-primary" style="float: right;" id="submit">수정</button>
+                    </div>
+                </div>
+
+                <div class="card-body">
+                    <div class="form-group text-center">
+                        <img id="profile" src="@Url.Action("GetProfilePicture", "User", new { email = Model.Email })" alt="Profile Picture" class="img-thumbnail mb-3" width="200" height="300"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">이메일</label>
+                        <!-- 모델의 Email 속성과 바인딩 -->
+                        <input type="text" class="form-control" asp-for="Email" id="email" readonly>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="title">이름</label>
+                        <!-- 모델의 Name 속성과 바인딩 -->
+                        <input type="text" class="form-control" asp-for="Name" id="title" readonly>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="authority">권한</label>
+                        <!-- 모델의 Authority 속성과 바인딩 -->
+                        <select class="form-control" asp-for="Authority" id="authority">
+                            <option value="1">일반</option>
+                            <option value="2">관리자</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="address1">우편번호</label>
+                        <input type="text" class="form-control" id="address1" placeholder="우편번호를 입력하세요" required>
+                        <label for="address2">주소</label>
+                        <input type="text" class="form-control" id="address2" placeholder="주소를 입력하세요" required>
+                        <label for="address3">상세주소</label>
+                        <input type="text" class="form-control" id="address3" placeholder="상세주소를 입력하세요" required>
+                        <!-- 모델의 Address 속성과 바인딩 -->
+                        <input type="hidden" asp-for="Address" id="address">
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">전화번호</label>
+                        <!-- 모델의 Tel 속성과 바인딩 -->
+                        <input type="tel" class="form-control" asp-for="Tel" id="phone" placeholder="전화번호를 입력하세요" maxlength="11" minlength="11" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="file">첨부 파일</label>
+                        <input type="file" class="form-control-file" name="file" id="file" th:value="${view.getFileName()}">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // 'address' id의 hidden input의 값을 가져옵니다.
+        var addressValue = document.getElementById("address").value;
+
+        // '@@' 기준으로 문자열을 분리합니다.
+        var addressParts = addressValue.split('@@');
+
+        // 분리된 값을 각 폼 필드에 넣습니다.
+        if (addressParts.length === 3) {
+            document.getElementById("address1").value = addressParts[0];
+            document.getElementById("address2").value = addressParts[1];
+            document.getElementById("address3").value = addressParts[2];
+        }
+    });
+
+    // 회원가입 버튼 클릭 시 주소를 합쳐서 숨겨진 입력 필드에 저장
+    $('#submit').click(function (e) {
+        var address1 = $('#address1').val();
+        var address2 = $('#address2').val();
+        var address3 = $('#address3').val();
+        var fullAddress = address1 + '@@' + address2 + '@@' + address3;
+
+        // 숨겨진 필드에 합쳐진 주소 저장
+        $('#address').val(fullAddress);
+    });
+</script>

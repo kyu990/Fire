@@ -1,0 +1,49 @@
+﻿@model MobleFinalServer.Models.HistoryView
+
+@{
+    ViewBag.Title = "화재 기록";
+    Layout = "~/Views/Shared/_LayoutMain.cshtml";
+}
+
+<div class="row">
+    <div class="col">
+        <div class="card">
+            <div class="card-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <span>화재 기록</span>
+                </div>
+            </div>
+            <div class="card-body">
+                <ul class="list-group">
+                    @if (Model.Histories != null)
+                    {
+                        foreach (var history in Model.Histories)
+                        {
+                            <a class="list-group-item" asp-controller="History" asp-action="ViewHistory" asp-route-videoName="@history.VideoName">@history.VideoName</a>
+                        }
+                    }
+                </ul>
+            </div>
+        </div>
+        <nav aria-label="페이지 네비게이션">
+            <ul class="pagination justify-content-center">
+                @{
+                    var prevDisabled = Model.CurrentPage == 1 ? "disabled" : "";
+                    <li class="page-item @prevDisabled">
+                        <a class="page-link" asp-controller="History" asp-action="Index" asp-route-pageNumber="@(Model.CurrentPage - 1)">이전</a>
+                    </li>
+                    for (int i = 1; i <= Model.TotalPage; i++)
+                    {
+                        <li class="@(i == Model.CurrentPage ? "page-item active" : "page-item")">
+                            <a class="page-link" asp-controller="History" asp-action="Index" asp-route-pageNumber="@i">@i</a>
+                        </li>
+                    }
+                    var nextDisabled = Model.CurrentPage == Model.TotalPage ? "disabled" : "";
+                    <li class="page-item @nextDisabled">
+                        <a class="page-link" asp-controller="History" asp-action="Index" asp-route-pageNumber="@(Model.CurrentPage + 1)">다음</a>
+                    </li>
+                }
+            </ul>
+        </nav>
+    </div>
+</div>

@@ -1,0 +1,83 @@
+﻿@{
+    ViewBag.Title = "실시간 영상";
+    Layout = "~/Views/Shared/_LayoutMain.cshtml";
+}
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/5.0.11/signalr.min.js"></script>
+
+<!-- 글목록 -->
+<div class="row">
+    <div class="col-md-9 col-sm-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <span>실시간 영상</span>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="embed-responsive embed-responsive-16by9">
+                    <video controls autoplay id="video-player"></video>
+                    <script>
+                        var video = document.getElementById('video-player');
+                        var videoSrc = 'http://106.240.9.234:11002/output_directory/playlist.m3u8';
+                        if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                            video.src = videoSrc;
+                        } else if (Hls.isSupported()) {
+                            var hls = new Hls();
+                            hls.loadSource(videoSrc);
+                            hls.attachMedia(video);
+                        }
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3 col-sm-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <span>센서 데이터</span>
+                </div>
+            </div>
+            <div class="card-body">
+                <ul class="list-group">
+                    <li class="list-group-item">불꽃 : <span id="flame-status"></span></li>
+                    <li class="list-group-item">가스 : <span id="gas-status"></span></li>
+                    <li class="list-group-item">조도 : <span id="light-status"></span></li>
+                    <li class="list-group-item">온도 : <span id="temperature-status"></span></li>
+                    <li class="list-group-item">습도 : <span id="humidity-status"></span></li>
+                    <li class="list-group-item">배터리 : <span id="battery-status"></span></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script type="text/javascript">
+        //클라이언트 시리얼을 모델에서 받아온 데이터로 교체해야 함
+        const clientSerial = "24y5m29d";
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl(`/sensorhub?clientSerial=${clientSerial}`)
+            .build();
+
+        // 서버로부터 데이터 수신
+        connection.on("RT_SensorData", (sensorData) => {
+            console.log("Received sensor data: ", sensorData);
+            if (sensorData) {
+                document.getElementById("flame-status").textContent = sensorData.Fire !== undefined ? sensorData.Fire.toString() : "미감지";
+                document.getElementById("gas-status").textContent = sensorData.Gas !== undefined ? sensorData.Gas.toString() : "미감지";
+                document.getElementById("light-status").textContent = sensorData.CDS !== undefined ? sensorData.CDS.toString() : "미감지";
+                document.getElementById("temperature-status").textContent = sensorData.Temp !== undefined ? sensorData.Temp + "도" : "미감지";
+                document.getElementById("humidity-status").textContent = sensorData.Humidity !== undefined ? sensorData.Humidity.toString() : "미감지";
+                document.getElementById("battery-status").textContent = sensorData.Battery !== undefined ? sensorData.Battery + "%" : "미감지";
+            }
+        });
+
+        // 연결 시작
+        connection.start().then(() => {
+            console.log("SignalR Connected.");
+        }).catch(err => console.error(err.toString()));
+    </script>
+}

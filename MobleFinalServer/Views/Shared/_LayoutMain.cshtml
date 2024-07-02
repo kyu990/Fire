@@ -1,0 +1,136 @@
+﻿@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
+	// 세션 데이터 읽어오기
+	var authError = HttpContextAccessor.HttpContext.Session.GetString("AuthError");
+	HttpContextAccessor.HttpContext.Session.Remove("AuthError");
+	var emailAuth = HttpContextAccessor.HttpContext.Session.GetString("emailAuth");
+	HttpContextAccessor.HttpContext.Session.Remove("emailAuth");
+}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>@ViewBag.Title - MobleFinalServer</title>
+	<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+	<!-- 부트스트랩 CDN 로드(항상 최신 버전 사용 : maxcdn) -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/latest/css/bootstrap.min.css">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/latest/js/bootstrap.min.js"></script>
+	<script src="~/js/script.js"></script>
+	<link rel="stylesheet" href="~/css/style.css" asp-append-version="true">
+</head>
+<body>
+	<!-- 최상단 nav -->
+	<div class="body-wrapper">
+		<div class="container">
+			<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+				<a class="navbar-brand" asp-controller="Home" asp-action="Index">
+					<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor"
+						 class="bi bi-bootstrap" viewBox="0 0 16 16">
+						<path d="M5.062 12h3.475c1.804 0 2.888-.908 2.888-2.396 0-1.102-.761-1.916-1.904-2.034v-.1c.832-.14 1.482-.93 1.482-1.816 0-1.3-.955-2.11-2.542-2.11H5.062V12zm1.313-4.875V4.658h1.78c.973 0 1.542.457 1.542 1.237 0 .802-.604 1.23-1.764 1.23H6.375zm0 3.762V8.162h1.822c1.236 0 1.887.463 1.887 1.348 0 .896-.627 1.377-1.811 1.377H6.375z" />
+						<path d="M0 4a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v8a4 4 0 0 1-4 4H4a4 4 0 0 1-4-4V4zm4-3a3 3 0 0 0-3 3v8a3 3 0 0 0 3 3h8a3 3 0 0 0 3-3V4a3 3 0 0 0-3-3H4z" />
+					</svg>
+				</a>
+				<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav1"
+						aria-controls="navbarNav1" aria-expanded="false" aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+				<div class="collapse navbar-collapse" id="navbarNav1">
+					<ul class="navbar-nav ml-auto">
+						@if (Context.Session.GetString("UserId") == null)
+						{
+							<li class="nav-item">
+								<a class="nav-link" asp-controller="User" asp-action="SignIn">로그인</a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link" asp-controller="User" asp-action="SignUp">회원가입</a>
+							</li>
+						}
+						else
+						{
+							<li class="nav-item">
+								<a class="nav-link" asp-controller="User" asp-action="SignOut">로그아웃</a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link" asp-controller="user" asp-action="Profile">프로필</a>
+							</li>
+						}
+
+						<li class="nav-item">
+							<form class="form-inline" action="/search/1">
+								<input class="form-control mr-sm-2" type="search" placeholder="검색" aria-label="Search" name="keyword">
+								<button class="btn btn-outline-light my-2 my-sm-0" type="submit">검색</button>
+							</form>
+						</li>
+					</ul>
+				</div>
+			</nav>
+
+			<!-- 헤더 -->
+			<header class="jumbotron">
+				<div class="container">
+					<p class="display-4" id="header-text">One Group</p>
+					<p class="lead">화재 감지 프로젝트</p>
+				</div>
+			</header>
+
+			<!-- 메뉴 nav -->
+			<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+				<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav2"
+						aria-controls="navbarNav2" aria-expanded="false" aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+				<div class="collapse navbar-collapse" id="navbarNav2">
+					<ul class="navbar-nav">
+						<li class="nav-item">
+							<a class="nav-link @(ViewContext.RouteData.Values["controller"].ToString() == "Home" && ViewContext.RouteData.Values["action"].ToString() == "Index" ? "active" : "")" asp-controller="Home" asp-action="Index">메인</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link @(ViewContext.RouteData.Values["controller"].ToString() == "FireDetect" && ViewContext.RouteData.Values["action"].ToString() == "Index" ? "active" : "")" asp-controller="FireDetect" asp-action="Index">실시간 영상</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link @(ViewContext.RouteData.Values["controller"].ToString() == "History" && ViewContext.RouteData.Values["action"].ToString() == "Index" ? "active" : "")" asp-controller="History" asp-action="Index">화재 기록</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link @(ViewContext.RouteData.Values["controller"].ToString() == "Authority" && ViewContext.RouteData.Values["action"].ToString() == "Index" ? "active" : "")" asp-controller="Authority" asp-action="Index">권한 설정</a>
+						</li>
+					</ul>
+				</div>
+			</nav>
+			@if (!string.IsNullOrEmpty(authError))
+			{
+				<div class="alert alert-danger" role="alert">
+					@authError
+				</div>
+			}
+			@if (!string.IsNullOrEmpty(emailAuth))
+			{
+				<div class="alert alert-danger" role="alert">
+					@emailAuth
+				</div>
+			}
+			<main role="main" class="pb-3">
+				@RenderBody()
+			</main>
+		</div>
+
+		<!-- 푸터 -->
+		<footer class="footer-fixed">
+			<div class="container">
+				<span class="text-muted">One Group - 화재 감지 프로젝트 &copy; 2024<br>이환희, 김채린, 김태운, 이규진, 전건아</span>
+			</div>
+		</footer>
+	</div>
+
+	<!-- 내부 js 정의 -->
+	<script>
+		$(window).on('resize', adjustHeaderTextSize);
+		$(document).ready(adjustHeaderTextSize);
+	</script>
+	@await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

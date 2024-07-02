@@ -1,0 +1,62 @@
+﻿@{
+	ViewBag.Title = "유저 목록";
+	Layout = "~/Views/Shared/_LayoutMain.cshtml";
+}
+@model MobleFinalServer.Models.AuthorityView
+<!-- 글목록 -->
+<div class="row">
+	<div class="col-md-8">
+		<div class="card">
+			<div class="card-header">
+				<div class="d-flex justify-content-between align-items-center">
+					<span>유저 목록</span>
+				</div>
+			</div>
+			<div class="card-body">
+				<ul class="list-group">
+					@if (Model.Authorities != null)
+					{
+						foreach (var user in Model.Authorities)
+						{
+							<a class="list-group-item" asp-controller="Authority" asp-action="EditAuthority" asp-route-email="@user.Email">@user.Name</a>
+						}
+					}
+				</ul>
+			</div>
+		</div>
+		<nav aria-label="페이지 네비게이션">
+			<ul class="pagination justify-content-center">
+				@{
+					var prevDisabled = Model.CurrentPage == 1 ? "disabled" : "";
+					<li class="page-item">
+						<button class="page-link @prevDisabled" asp-controller="Authority" asp-action="Index" asp-route-pageNumber="@(Model.CurrentPage - 1)">이전</button>
+					</li>
+					for (int i = 1; i <= Model.TotalPage; i++)
+					{
+						<li class="@(i == Model.CurrentPage) ? 'page-item active' : 'page-item'">
+							<a class="page-link" asp-controller="Authority" asp-action="Index" asp-route-pageNumber="@i">@i</a>
+						</li>
+					}
+					var nextDisabled = Model.CurrentPage == Model.TotalPage ? "disabled" : "";
+					<li class="page-item">
+						<button class="page-link @nextDisabled" asp-controller="Authority" asp-action="Index" asp-route-pageNumber="@(Model.CurrentPage + 1)">다음</button>
+					</li>
+				}
+			</ul>
+		</nav>
+	</div>
+
+
+	<div class="col-md-4">
+		<div class="card">
+			<div class="card-header">권한 요청 목록</div>
+			<div class="card-body">
+				<ul class="list-group">
+					<th:block th:each="tpost : ${topPost}">
+						<a class="list-group-item" th:href="'/view/'+${tpost.getPostId()}+'/1'" th:text="${tpost.title}"></a>
+					</th:block>
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>

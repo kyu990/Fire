@@ -1,0 +1,79 @@
+﻿@{
+    ViewBag.Title = "Profile";
+    ViewBag.Title2 = "프로필";
+    Layout = "~/Views/Shared/_LayoutSign.cshtml";
+}
+
+@model MobleFinalServer.Models.User;
+
+<div class="container mt-5">
+    <form method="post" asp-controller="User" asp-action="Profile" onsubmit="return validateForm()" enctype="multipart/form-data">
+        <div class="form-group text-center">
+                <img id="profile" src="@Url.Action("GetProfilePicture", "User", new { email = Model.Email })" alt="Profile Picture" class="img-thumbnail mb-3" />
+        </div>
+        <div class="form-group">
+            <label for="email">아이디</label>
+            <input type="email" class="form-control" asp-for="Email" id="email" value="@Model.Email" readonly>
+        </div>
+        <div class="form-group">
+            <label for="password">비밀번호</label>
+            <input type="password" class="form-control" asp-for="Password" id="password" placeholder="비밀번호를 입력하세요" required>
+        </div>
+        <div class="form-group">
+            <label for="confirmPassword">비밀번호 확인</label>
+            <input type="password" class="form-control" asp-for="ConfirmPassword" id="confirmPassword" placeholder="비밀번호를 입력하세요" required>
+            <small id="message"></small>
+        </div>
+        <div class="form-group">
+            <label for="name">이름</label>
+            <input type="text" class="form-control" asp-for="Name" id="name" value="@Model.Name" required>
+        </div>
+        <div class="form-group">
+            <label for="address">주소</label>
+            <input type="text" class="form-control" asp-for="Address" id="address" value="@Model.Address" required>
+        </div>
+        <div class="form-group">
+            <label for="authority">권한</label>
+            <select class="form-control" asp-for="Authority" id="authority" disabled>
+                <option value="1">일반</option>
+                <option value="2">관리자</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="phone">전화번호</label>
+            <input type="tel" class="form-control" asp-for="Tel" id="phone" maxlength="11" minlength="11" value="@Model.Tel" required>
+        </div>
+        <div class="form-group">
+            <label for="serial">클라이언트 시리얼</label>
+            <input type="tel" class="form-control" asp-for="ClientSerial" id="serial" value="@Model.ClientSerial" required>
+        </div>
+        <div class="form-group text-center">
+            <input type="submit" class="btn btn-primary" value="정보 수정">
+        </div>
+        <div class="form-group text-center">
+            <a class="btn btn-danger" asp-controller="User" asp-action="Withdraw">회원 탈퇴</a>
+        </div>
+    </form>
+</div>
+
+<script>
+    var passwordInput = document.getElementById("password");
+    var confirmPasswordInput = document.getElementById("confirmPassword");
+    var message = document.getElementById("message");
+
+    function validateForm() {
+        var password = passwordInput.value;
+        var confirmPassword = confirmPasswordInput.value;
+
+        if (password === confirmPassword) {
+            message.innerHTML = "비밀번호가 일치합니다.";
+            message.style.color = "green";
+            return true; // 제출 허용
+        } else {
+            message.innerHTML = "비밀번호가 일치하지 않습니다.";
+            message.style.color = "red";
+            confirmPasswordInput.style.borderColor = "red";
+            return false; // 제출 차단
+        }
+    }
+</script>

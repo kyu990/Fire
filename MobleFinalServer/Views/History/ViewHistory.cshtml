@@ -1,0 +1,23 @@
+﻿@model MobleFinalServer.Models.History
+
+@{
+    ViewBag.Title = "과거 기록";
+    Layout = "~/Views/Shared/_LayoutMain.cshtml";
+}
+
+<div class="row">
+    <div class="col-md-12 col-sm-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <span>@Model.VideoName 영상</span>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="embed-responsive embed-responsive-16by9">
+                    <video controls autoplay id="video-player" src="@Model.VideoPath"></video>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
